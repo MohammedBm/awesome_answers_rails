@@ -5,6 +5,6 @@ class QuestionMailer < ApplicationMailer
     @user = question.user
     if @user.presemt?
       mail(to: @user.eamil, subject:'Question Reminder')
-
+  end
   end
 end
