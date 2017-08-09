@@ -14,7 +14,9 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-
+gem 'rack-cors'
+gem 'delayed_job_active_record'
+gem 'delayed_job_web'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.1.2'
 # Use postgresql as the database for Active Record
@@ -27,7 +29,7 @@ gem 'sass-rails', '~> 5.0'
 gem 'uglifier', '>= 1.3.0'
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
-
+gem 'active_model_serializers'
 # Use CoffeeScript for .coffee assets and views
 gem 'coffee-rails', '~> 4.2'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
@@ -40,9 +42,9 @@ gem 'bcrypt', '~> 3.1.7'
 gem 'cancancan', '~> 2.0'
 
 gem 'bootstrap-sass', '~> 3.3.6'
-
+gem "font-awesome-rails"
 gem 'cowsay'
-
+gem 'jquery-rails'
 gem 'faker', github: 'stympy/faker'
 
 # Use Capistrano for deployment
@@ -60,7 +62,7 @@ group :development do
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
-
+  gem 'letter_opener'
   gem 'awesome_print'
   gem 'interactive_editor'
   gem 'hirb'

@@ -11,9 +11,17 @@ class QuestionsController < ApplicationController
 
   before_action :authorize_user!, only: [:edit, :destroy, :update]
 
-
   def index
     @questions = Question.order(created_at: :desc)
+
+    #respond_ to endables us to send different response types depending on the format requested
+    respond_to do |format|
+    #HTML is the default format. In this casem render will just show the view `questions/index.html.erb`
+      format.html{render}
+      # ActiveRecord objects have the `to_json` method. When using `render` with the `json:` argument with ActiveRecord object, it will automatically use the method `to_json` to convert it into json format and send it.
+      format.json{render json: @questions}
+      format.xml{render xml: @questions}
+    end
   end
 
   # The New action is usually used to show a form of
@@ -45,6 +53,7 @@ class QuestionsController < ApplicationController
 
   def show
     @answer = Answer.new
+    @like = @question.likes.find_by(user: current_user)
     # Using association methods just builds queries, meaning that
     # we can continue chaining more and more query methods such order, limit, offset, where
     # , etc
@@ -80,7 +89,7 @@ class QuestionsController < ApplicationController
 
   private
   def question_params
-    params.require(:question).permit(:title, :body)
+    params.require(:question).permit(:title, :body, :tag_list)
     # The params object is avaible in all controllers and it gives you
     # access to all the data coming from a form or url params
 
@@ -96,27 +105,20 @@ class QuestionsController < ApplicationController
     @question = Question.find params[:id]
   end
 
-
-
-
-  #remember that if a `before_action` dose `render`, `redirect_to` or ` head`. it will stop the request from getting tot he action (it will basically halt the request right there)
+  # remember that if a `before_action` does `render`, `redirect_to` or `head`
+  # it will stop the request from getting to the action (it will basically halt
+  # the request right there)
   def authorize_user!
-    # if @question.user != current_user
     # head :unauthorized unless can?(:manage, @question)
     unless can?(:manage, @question)
       # redirect_to root_path, alert: 'Access denied'
 
-
-      #head will send an empty http response, it takes one argument as a symbol and the argument will tell Rails
-      # to send dseired HTTP response code
-
-      # :unauthorized -> 401
-      # you can see more code in this page:
-      #http://billpatrianakos.me/blog/2013/10/13/list-of-rails-status-code-symbols/
-
+      # head will send an empty HTTP response, it takes one argument as a symbol
+      # and the argument will tell Rails to send the desired HTTP response code
+      # 	:unauthorized -> 401
+      # you can see more code on this page:
+      # http://billpatrianakos.me/blog/2013/10/13/list-of-rails-status-code-symbols/
       head :unauthorized
-
     end
   end
-
 end

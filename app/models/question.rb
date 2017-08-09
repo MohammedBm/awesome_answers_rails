@@ -1,4 +1,9 @@
 class Question < ApplicationRecord
+  has_many :taggings, dependent: :destroy
+  has_many :tags, through: :taggings
+
+  has_many :likes, dependent: :destroy
+  has_many :likers, through: :likes, source: :user
   # Like `belongs_to`, `has_many` tells Rails that Question is associated to
   # the Answer model.
   has_many :answers, dependent: :destroy
@@ -37,18 +42,37 @@ class Question < ApplicationRecord
                     })
   validates(:body, { presence: true, length: { minimum: 5, maximum: 2000 }})
   validates(:view_count, numericality: { greater_than_or_equal_to: 0 })
-
   validate :no_monkey
 
   after_initialize :set_defaults
   before_validation :titleize_title
 
   # scope :recent, lambda {|count| order({ created_at: :desc }).limit(count) }
+
+#this for upvotes
   def self.recent(count)
     order({ created_at: :desc }).limit(count)
   end
 
+
+  # this is for tags
+  def tag_list
+    #this  is a shortcut method of doing ---> tags.map{|tag| tag.name }
+    tags.map(&:name).join(", ")
+  end
+
+  # we can create methods that are called `setters`. they simulate
+  # an instance attribute. When assigning a value to it, it is
+  # instead passsed as argument to the method.
+  #question.tag_list = `some,thing,etx`
+  def tag_list=(value)
+    self.tags = value.split(/\s*,\s*/).map do |name|
+      Tag.where(name: name.downcase).first_or_create!
+    end
+  end
+
   private
+
 
   def no_monkey
     if title.present? && title.downcase.include?('monkey')

@@ -4,11 +4,12 @@ class AnswersController < ApplicationController
     @question = Question.find params[:question_id]
     @answer = @question.answers.build(answer_params)
     @answer.user = current_user
-    # 👆 shortcut for doing 👇
+    # ð shortcut for doing ð
     # answer = Answer.new(answer_params)
     # answer.question = question
 
     if @answer.save
+      AnswersMailer.notify_questions_owner(@answer).deliver_now
       redirect_to question_path(@question)
     else
       # We can use render to display any template by providing their
@@ -21,12 +22,11 @@ class AnswersController < ApplicationController
   def destroy
     answer = Answer.find params[:id]
     if can?(:destroy, answer)
-      answer.destory
+      answer.destroy
       redirect_to question_path(answer.question)
     else
       head :unauthorized
     end
-
   end
 
   private

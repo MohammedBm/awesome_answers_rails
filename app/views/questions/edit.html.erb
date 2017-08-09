@@ -30,5 +30,12 @@ In addition, all the fields will be prepopulated with data from the database. %>
     <%= f.text_area :body %>
   </div>
 
+  <div>
+    <%= f.label :tag_list, "Tags (seperated by commas)" %>
+    <%= f.text_field :tag_list %>
+  </div>
+
+
+
   <%= f.submit %>
 <% end %>

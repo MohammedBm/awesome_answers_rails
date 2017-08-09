@@ -1,5 +1,13 @@
 class User < ApplicationRecord
+  has_many :votes, dependent: :destroy
+  has_many :voted_answers, through: :votes, source: :answer
 
+  has_many :likes, dependent: :destroy
+  #has_many first arugment dose not have to be another table name, it can be name of you chosing, but when doing so you must sepcify details of the association. In this many to many association, we specify the table in between with the `through` argument and we specify the associated model with `sourcr`
+
+  #the value given to `through:` must refer to the name of another assoccation. This assoctaion must be defined in hte model before the `has_many ...:through` many to many aassociation. In this case, `has_many :liked_questions` must be defined.
+
+  has_many :liked_questions, through: :likes, source: :question
   # has_secure_password is a built-in rails method that provides
   # use authentication features for the model its called in
   # 1. It will automatically add a presence validator for the password field
@@ -15,17 +23,30 @@ class User < ApplicationRecord
   #    the password in incorrect and the user if correct.
   has_secure_password
 
-
   has_many :questions, dependent: :nullify
   has_many :answers, dependent: :nullify
-
 
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i
   validates :email, presence: true, uniqueness: true, format: VALID_EMAIL_REGEX
 
   validates :first_name, :last_name, presence: true
 
+  before_create :generate_api_key
+
   def full_name
     "#{first_name} #{last_name}"
+  end
+
+  private
+  # We can use the `.send` method to dynamically call a method. We can also use this to get around the fact that a method is `private`.
+  #User `u.send(:generate_api_key)` to call it even though its private
+  def generate_api_key
+    # SecureRandom.hex(32) will generate a string of length 32 contaning
+    # random hex characters.
+    loop do
+      self.api_key = SecureRandom.hex(32)
+      # In the eventuality that we accidently create an API key that already exists in our database, we're going to loop and rengearate it until that is no longer the case
+      break unless User.exists?(api_key: api_key)
+    end
   end
 end

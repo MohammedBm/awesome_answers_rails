@@ -12,22 +12,48 @@
  *
  *= require_tree .
  *= require_self
+ *= require font-awesome
  */
+
+ .voting-widget {
+   width: 75px;
+   flex-shrink: 0;
+
+   display: flex;
+   flex-flow: column;
+   align-items: center;
+ }
+
+
+ .voting-widget a.active > i {
+   color: LightBlue;
+ }
+
+
+ .answer-list {
+   list-style: none;
+   padding-left: 0;
+ }
+
+ .answer-list > li {
+   display: flex;
+   margin: 10px 0;
+ }
 
  .field_with_errors input, .field_with_errors textarea {
    border: medium solid red;
  }
 
+ .alert {
+   border-radius: 5px;
+   padding: 0.5em;
+ }
 
-.alert{
-  border-radius: 5px;
-  padding: 1em;
-}
+ .alert.alert-success {
+   background-color: YellowGreen;
+ }
 
-.alert.alert-success{
-  background-color: Yellowgreen;
-}
-
-.alert.alert-danger{
-  background-color: Salmon;
-}
+ .alert.alert-danger {
+   background-color: Salmon;
+   color: White;
+ }
